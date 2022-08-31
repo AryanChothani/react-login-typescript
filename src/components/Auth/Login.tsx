@@ -6,12 +6,14 @@ import { addUser } from '../../redux/slices/UserSlice'
 import AuthService from "../../services/Auth";
 import './Auth.css'
 import Session from 'store2';
+import { useAuthContext } from "../../context/authContext";
 
 
 export default function () {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    const [auth, setAuthenticated] = useAuthContext();
     const [creds, setCreds] = useState({ email: "", password: "" });
     const [attempts, setAttempts] = useState(10);
     const [invaliedCreds, setInvaliedCreds] = useState(false);
@@ -32,6 +34,7 @@ export default function () {
 
                 if (!data.error) {
                     dispatch(addUser({ email: creds.email }))
+                    setAuthenticated({ isAuthenticated: true })
                     Session.session("session_token", data.sessionToken)
                     navigate('/otp')
                 } else {

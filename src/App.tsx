@@ -16,7 +16,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Auth />} />
           <Route path="/otp" element={<Otp />} />
-          <Route path="/profile" element={<ProtectedRoute isAuthenticated={authContext.isAuthenticated} outlet={<Profile />} />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </BrowserRouter>
     </div>

@@ -4,7 +4,7 @@ import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../context/authContext";
 import { RootState } from '../../redux/store'
-
+import Session from 'store2'
 import AuthService from "../../services/Auth";
 import './Otp.css'
 
@@ -13,7 +13,6 @@ import './Otp.css'
 export default function () {
 
     const navigate = useNavigate();
-    const [auth, setAuthenticated] = useAuthContext();
 
 
     var state = useSelector((state: RootState) => state.user)
@@ -30,7 +29,7 @@ export default function () {
         let data = await AuthService.VerifyOTP({ otp });
 
         if (!data.error) {
-            setAuthenticated({ ...auth, isAuthenticated: true })
+            Session.session("userAccessToken", data.token);
             navigate('/profile')
         }
     }
@@ -47,7 +46,7 @@ export default function () {
                 getCodeBoxElement(index).blur();
             }
         }
-        if (eventCode === 8 && index !== 1) {
+        if (eventCode === 10 && index !== 1) {
             getCodeBoxElement(index - 1).focus();
         }
     }
