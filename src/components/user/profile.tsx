@@ -2,6 +2,7 @@
 import React, { useState } from "react"
 import { useSelector } from "react-redux"
 import { RootState } from "../../redux/store";
+import TranslateService from "../../services/Translate";
 import './index.css'
 
 const getBase64 = (img: any, callback: any) => {
@@ -15,10 +16,11 @@ const getBase64 = (img: any, callback: any) => {
 
 export default function () {
     const user = useSelector((state: RootState) => state.user)
-    const [profile, setProfile] = useState({ img: "" });
+    const [profile, setProfile] = useState({ img: "", username: "", fullname: "", bio: "", translatedbio: "" });
 
 
-    const handleFileUpload = async (e: any) => {
+
+    const handleFileUpload = (e: any) => {
         debugger
         console.log(e.target.files)
 
@@ -26,6 +28,22 @@ export default function () {
             console.log(imageUrl)
             setProfile({ ...profile, img: imageUrl })
         });
+    }
+    const handleChange = (e: any, key: string) => {
+        setProfile({ ...profile, [key]: e.target.value })
+    }
+    const handleTranslate = async () => {
+        let data = {
+            q: profile.bio,
+            source: "en",
+            target: "fr",
+            format: "html"
+        }
+
+        let response = await TranslateService.Translate(data)
+        debugger
+        setProfile({ ...profile, translatedbio: response.translatedText })
+
     }
 
 
@@ -49,15 +67,22 @@ export default function () {
                                 <h4 className="text-right">Profile</h4>
                             </div>
                             <div className="row mt-2">
-                                <div className="col-md-6"><label className="profile-labels">UserName</label><input type="text" className="form-control" placeholder="username" value=""></input></div>
+                                <div className="col-md-6"><label className="profile-labels">UserName</label><input type="text" className="form-control" placeholder="username" onChange={(e) => handleChange(e, "username")} value={profile.username}></input></div>
                             </div>
                             <div className="row mt-3">
-                                <div className="col-md-12"><label className="profile-labels">FullName</label><input type="text" className="form-control" placeholder="Enter Full Name" value=""></input></div>
+                                <div className="col-md-12"><label className="profile-labels">FullName</label><input type="text" className="form-control" placeholder="Enter Full Name" onChange={(e) => handleChange(e, "fullname")} value={profile.fullname}></input></div>
                             </div>
                             <div className="row mt-3">
-                                <div className="col-md-6"><label className="profile-labels">Bio</label><textarea className="form-control" placeholder="Bio" value=""></textarea></div>
+                                <div className="col-md-6"><label className="profile-labels">Bio</label><textarea className="form-control" placeholder="Bio" onChange={(e) => handleChange(e, "bio")} value={profile.bio}></textarea></div>
                             </div>
-                            <div className="mt-5 text-center"><button className="btn btn-primary profile-button" type="button">Translate</button></div>
+                            <div className="mt-5 text-center"><button className="btn btn-primary profile-button" type="button" onClick={handleTranslate}>Translate</button></div>
+
+                            <div className="card row mt-3">
+                                <h5 className="card-header">Translated Bio</h5>
+                                <div className="card-body">
+                                    <p className="card-text">{profile.translatedbio}</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -36,7 +36,7 @@ class ApiHelper {
     static async xhr(route: string, params: object | null, token = "" || null, session_token = "" || null, verb: string) {
 
         const host = BASE_URL;
-        const url = host + route;
+        var url = route == "translate" ? "https://libretranslate.de/" + route : host + route;
         let options: any = Object.assign({ method: verb }, params ? { body: JSON.stringify(params) } : null);
 
         options.headers = ApiHelper.headers();
