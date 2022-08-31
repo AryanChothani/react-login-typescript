@@ -18,10 +18,8 @@ export default function () {
     const user = useSelector((state: RootState) => state.user)
     const [profile, setProfile] = useState({ img: "", username: "", fullname: "", bio: "", translatedbio: "" });
 
-
-
     const handleFileUpload = (e: any) => {
-        debugger
+
         console.log(e.target.files)
 
         getBase64(e.target.files[0], (imageUrl: string) => {
@@ -41,7 +39,7 @@ export default function () {
         }
 
         let response = await TranslateService.Translate(data)
-        debugger
+
         setProfile({ ...profile, translatedbio: response.translatedText })
 
     }

@@ -1,8 +1,8 @@
 
 import React, { useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom";
-import UserSlice from '../../redux/slices/UserSlice'
+import { useAuthContext } from "../../context/authContext";
 import { RootState } from '../../redux/store'
 
 import AuthService from "../../services/Auth";
@@ -11,8 +11,11 @@ import './Otp.css'
 
 
 export default function () {
-    const dispatch = useDispatch();
+
     const navigate = useNavigate();
+    const [auth, setAuthenticated] = useAuthContext();
+
+
     var state = useSelector((state: RootState) => state.user)
 
 
@@ -24,12 +27,12 @@ export default function () {
 
     const handleSubmit = async () => {
         console.log(otp)
-        let data = await AuthService.Login({ otp });
+        let data = await AuthService.VerifyOTP({ otp });
 
         if (!data.error) {
-            navigate('/')
+            setAuthenticated({ ...auth, isAuthenticated: true })
+            navigate('/profile')
         }
-
     }
 
     const getCodeBoxElement = (index: number): any => {
@@ -42,9 +45,6 @@ export default function () {
                 getCodeBoxElement(index + 1).focus();
             } else {
                 getCodeBoxElement(index).blur();
-                // Submit code
-                console.log('submit code ');
-                document.getElementById('submit')?.focus();
             }
         }
         if (eventCode === 8 && index !== 1) {
