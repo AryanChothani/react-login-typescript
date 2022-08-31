@@ -1,75 +1,67 @@
 
 import React, { useState } from "react"
-import { useDispatch } from "react-redux"
-import { useNavigate } from "react-router-dom";
-import { addUser } from '../../redux/slices/UserSlice'
-import AuthService from "../../services/Auth";
-import './Auth.css'
+import { useSelector } from "react-redux"
+import { RootState } from "../../redux/store";
+import './index.css'
 
+const getBase64 = (img: any, callback: any) => {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => {
+        callback(reader.result);
+    });
+    reader.readAsDataURL(img);
+}
 
 
 export default function () {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
+    const user = useSelector((state: RootState) => state.user)
+    const [profile, setProfile] = useState({ img: "" });
 
-    const [creds, setCreds] = useState({});
 
-    const handleChange = (e: any, key: string) => {
-        setCreds({ ...creds, [key]: e.target.value });
-    }
+    const handleFileUpload = async (e: any) => {
+        debugger
+        console.log(e.target.files)
 
-    const handleSubmit = async () => {
-
-        let data = await AuthService.Login(creds);
-
-        if (!data.error) {
-            dispatch(addUser(creds))
-            navigate('/otp')
-        }
-
+        getBase64(e.target.files[0], (imageUrl: string) => {
+            console.log(imageUrl)
+            setProfile({ ...profile, img: imageUrl })
+        });
     }
 
 
     return (
-        <div class="container rounded bg-white mt-5 mb-5">
-            <div class="row">
-                <div class="col-md-3 border-right">
-                    <div class="d-flex flex-column align-items-center text-center p-3 py-5"><img class="rounded-circle mt-5" src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQF2psCzfbB611rnUhxgMi-lc2oB78ykqDGYb4v83xQ1pAbhPiB&usqp=CAU"><span class="font-weight-bold">Amelly</span><span class="text-black-50">amelly12@bbb.com</span><span> </span></div>
-                </div>
-                <div class="col-md-5 border-right">
-                    <div class="p-3 py-5">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h4 class="text-right">Profile Settings</h4>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-md-6"><label class="labels">Name</label><input type="text" class="form-control" placeholder="first name" value=""></div>
-                            <div class="col-md-6"><label class="labels">Surname</label><input type="text" class="form-control" value="" placeholder="surname"></div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-md-12"><label class="labels">PhoneNumber</label><input type="text" class="form-control" placeholder="enter phone number" value=""></div>
-                            <div class="col-md-12"><label class="labels">Address</label><input type="text" class="form-control" placeholder="enter address" value=""></div>
-                            <div class="col-md-12"><label class="labels">Email ID</label><input type="text" class="form-control" placeholder="enter email id" value=""></div>
-                            <div class="col-md-12"><label class="labels">Education</label><input type="text" class="form-control" placeholder="education" value=""></div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-md-6"><label class="labels">Country</label><input type="text" class="form-control" placeholder="country" value=""></div>
-                            <div class="col-md-6"><label class="labels">State/Region</label><input type="text" class="form-control" value="" placeholder="state"></div>
-                        </div>
-                        <div class="mt-5 text-center"><button class="btn btn-primary profile-button" type="button">Save Profile</button></div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="p-3 py-5">
-                        <div class="d-flex justify-content-between align-items-center experience"><span>Edit Experience</span><span class="border px-3 p-1 add-experience"><i class="fa fa-plus"></i>&nbsp;Experience</span></div>
-                        <br>
-                            <div class="col-md-12"><label class="labels">Experience in Designing</label><input type="text" class="form-control" placeholder="experience" value=""></div>
-                            <br>
-                                <div class="col-md-12"><label class="labels">Additional Details</label><input type="text" class="form-control" placeholder="additional details" value=""></div>
+        <div>
+            <div className="container rounded bg-white mt-5 mb-5">
+                <div className="row">
+                    <div className="col-md-3 border-right">
+                        <div className="d-flex flex-column align-items-center text-center p-3 py-5">
+                            <img className="img-fluid mt-5" src={profile.img}></img>
+                            <span className="text-black-50">{user.email}</span>
+                            <div className="mb-3">
+                                <input className="form-control" type="file" onChange={(e) => handleFileUpload(e)} id="formFile"></input>
                             </div>
+                            <span> </span>
+                        </div>
+                    </div>
+                    <div className="col-md-5 border-right">
+                        <div className="p-3 py-5">
+                            <div className="d-flex justify-content-between align-items-center mb-3">
+                                <h4 className="text-right">Profile</h4>
+                            </div>
+                            <div className="row mt-2">
+                                <div className="col-md-6"><label className="profile-labels">UserName</label><input type="text" className="form-control" placeholder="username" value=""></input></div>
+                            </div>
+                            <div className="row mt-3">
+                                <div className="col-md-12"><label className="profile-labels">FullName</label><input type="text" className="form-control" placeholder="Enter Full Name" value=""></input></div>
+                            </div>
+                            <div className="row mt-3">
+                                <div className="col-md-6"><label className="profile-labels">Bio</label><textarea className="form-control" placeholder="Bio" value=""></textarea></div>
+                            </div>
+                            <div className="mt-5 text-center"><button className="btn btn-primary profile-button" type="button">Translate</button></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-     </div >
     )
 }
